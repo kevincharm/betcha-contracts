@@ -2,7 +2,11 @@
   "name": "betcha-contracts",
   "version": "1.0.0",
   "description": "betcha five bucks",
+  "license": "UNLICENSED",
   "author": "kevincharm <kevin.charm@troop.finance>",
+  "scripts": {
+    "deploy:base": "yarn hardhat --network base scripts/deploy.ts"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
     "@nomicfoundation/hardhat-ethers": "^3.0.4",

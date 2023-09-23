@@ -15,6 +15,8 @@ contract BetchaRoundFactory {
     address public safeMasterCopy;
     /// @notice BetchaRound implementation
     address public betchaRoundMasterCopy;
+    /// @notice Nonce for deploying Safe proxies
+    uint256 public nonce;
 
     event BetchaRoundCreated(address indexed deployedAddress);
 
@@ -41,10 +43,10 @@ contract BetchaRoundFactory {
             resolver = ISafeProxyFactory(safeProxyFactory).createProxyWithNonce(
                     safeMasterCopy,
                     "0x",
-                    computeSafeProxySalt(nonce)
+                    uint256(keccak256(abi.encode(address(this), nonce)))
                 );
             // TODO: Encode this above
-            resolver.setup(
+            ISafe(resolver).setup(
                 resolvers,
                 resolvers.length,
                 address(0),

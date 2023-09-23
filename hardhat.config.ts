@@ -1,5 +1,4 @@
 import type { HardhatUserConfig } from 'hardhat/config'
-// import '@nomiclabs/hardhat-ethers'
 import '@nomicfoundation/hardhat-verify'
 import '@nomicfoundation/hardhat-toolbox'
 import 'hardhat-contract-sizer'
@@ -22,17 +21,17 @@ const config: HardhatUserConfig = {
             chainId: 137,
             forking: {
                 enabled: true,
-                url: process.env.MATIC_URL as string,
-                blockNumber: 40794110,
+                url: process.env.BASE_URL as string,
+                blockNumber: 4356900,
             },
             blockGasLimit: 155_000_000,
             accounts: {
                 count: 10,
             },
         },
-        matic: {
-            url: process.env.MATIC_URL as string,
-            chainId: 137,
+        base: {
+            url: process.env.BASE_URL as string,
+            chainId: 8453,
             accounts: [process.env.MAINNET_PK as string],
         },
     },

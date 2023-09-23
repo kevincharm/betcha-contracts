@@ -1,4 +1,5 @@
 import { ethers } from 'hardhat'
+import { BetchaRound__factory } from '../typechain-types'
 
 async function main() {
     const [deployer] = await ethers.getSigners()
