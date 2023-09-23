@@ -49,6 +49,12 @@ contract BetchaRound {
         address indexed tokenAddress,
         uint256 amount
     );
+    event Wagered(
+        address indexed gambler,
+        address indexed tokenAddress,
+        uint256 amount
+    );
+    event Settled(uint8 outcome);
 
     constructor(
         address wagerTokenAddress_,
@@ -68,6 +74,10 @@ contract BetchaRound {
         settlementAvailableAt = settlementAvailableAt_;
         resolver = resolver_;
         metadataURI = metadataURI_;
+
+        // Initialise sets
+        outcome0Wagers.init();
+        outcome1Wagers.init();
     }
 
     function _assertValidOutcome(uint8 outcome) internal pure {
@@ -88,6 +98,10 @@ contract BetchaRound {
         } else {
             outcome1Wagers.add(msg.sender);
         }
+        require(
+            outcome0Wagers.has(msg.sender) || outcome1Wagers.has(msg.sender),
+            "Something went wrong"
+        );
 
         if (wagerTokenAddress == NATIVE_ETH_TOKEN) {
             totalWageredAmount += msg.value;
@@ -102,6 +116,7 @@ contract BetchaRound {
                 wagerTokenAmount
             );
         }
+        emit Wagered(msg.sender, wagerTokenAddress, wagerTokenAmount);
     }
 
     function settle(uint8 outcome) public {
@@ -114,6 +129,8 @@ contract BetchaRound {
         s.hasSettled = true;
         s.outcome = outcome;
         settlementInfo = s;
+
+        emit Settled(outcome);
     }
 
     function totalParticipants() public view returns (uint256) {
@@ -134,6 +151,8 @@ contract BetchaRound {
             (s.outcome == 1 && didBetOutcome1)
         ) {
             _payoutShare(recipient);
+        } else {
+            revert("Caller did not win");
         }
     }
 
