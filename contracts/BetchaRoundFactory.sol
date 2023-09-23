@@ -13,21 +13,14 @@ contract BetchaRoundFactory {
     address public safeProxyFactory;
     /// @notice Gnosis Safe implementation
     address public safeMasterCopy;
-    /// @notice BetchaRound implementation
-    address public betchaRoundMasterCopy;
     /// @notice Nonce for deploying Safe proxies
     uint256 public nonce;
 
     event BetchaRoundCreated(address indexed deployedAddress);
 
-    constructor(
-        address safeProxyFactory_,
-        address safeMasterCopy_,
-        address initialMasterCopy
-    ) {
+    constructor(address safeProxyFactory_, address safeMasterCopy_) {
         safeProxyFactory = safeProxyFactory_;
         safeMasterCopy = safeMasterCopy_;
-        betchaRoundMasterCopy = initialMasterCopy;
     }
 
     function createRound(

@@ -10,11 +10,6 @@
         "internalType": "address",
         "name": "safeMasterCopy_",
         "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "initialMasterCopy",
-        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -32,19 +27,6 @@
     ],
     "name": "BetchaRoundCreated",
     "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "betchaRoundMasterCopy",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
   },
   {
     "inputs": [
