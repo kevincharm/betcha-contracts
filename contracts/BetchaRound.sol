@@ -29,6 +29,8 @@ contract BetchaRound {
     /// @notice The EOA or contract that will settle the final outcome of
     address public immutable resolver;
 
+    /// @notice URI to metadata containing bet details
+    string public metadataURI;
     /// @notice Running pot total
     uint256 public totalWageredAmount;
     /// @notice Users that wagered on outcome 0
@@ -53,7 +55,8 @@ contract BetchaRound {
         uint256 wagerTokenAmount_,
         address resolver_,
         uint256 wagerDeadlineAt_,
-        uint256 settlementAvailableAt_
+        uint256 settlementAvailableAt_,
+        string memory metadataURI_
     ) {
         wagerTokenAddress = wagerTokenAddress_;
         wagerTokenAmount = wagerTokenAmount_;
@@ -64,6 +67,7 @@ contract BetchaRound {
         wagerDeadlineAt = wagerDeadlineAt_;
         settlementAvailableAt = settlementAvailableAt_;
         resolver = resolver_;
+        metadataURI = metadataURI_;
     }
 
     function _assertValidOutcome(uint8 outcome) internal pure {

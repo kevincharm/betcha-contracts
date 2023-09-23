@@ -28,7 +28,8 @@ contract BetchaRoundFactory {
         uint256 wagerTokenAmount,
         address[] calldata resolvers,
         uint256 wagerDeadlineAt,
-        uint256 settlementAvailableAt
+        uint256 settlementAvailableAt,
+        string memory metadataURI
     ) public returns (address) {
         // Deploy a Safe as the multisig resolver if |resolvers| > 1
         address resolver = resolvers[0];
@@ -56,7 +57,8 @@ contract BetchaRoundFactory {
             wagerTokenAmount,
             resolver,
             wagerDeadlineAt,
-            settlementAvailableAt
+            settlementAvailableAt,
+            metadataURI
         );
         emit BetchaRoundCreated(address(round));
         return address(round);
