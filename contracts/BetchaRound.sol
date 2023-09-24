@@ -55,6 +55,7 @@ contract BetchaRound {
         uint256 amount
     );
     event Settled(uint8 outcome);
+    event MessagePosted(address indexed author, string content);
 
     constructor(
         address wagerTokenAddress_,
@@ -171,5 +172,9 @@ contract BetchaRound {
             token.safeTransfer(to, payoutAmount);
         }
         emit Payout(to, wagerTokenAddress, payoutAmount);
+    }
+
+    function post(string calldata content) external {
+        emit MessagePosted(msg.sender, content);
     }
 }
