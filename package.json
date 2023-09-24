@@ -5,7 +5,8 @@
   "license": "UNLICENSED",
   "author": "kevincharm <kevin.charm@troop.finance>",
   "scripts": {
-    "deploy:base": "yarn hardhat --network base run scripts/deploy.ts"
+    "deploy:base": "yarn hardhat --network base run scripts/deploy.ts",
+    "test": "yarn hardhat --network hardhat test"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",

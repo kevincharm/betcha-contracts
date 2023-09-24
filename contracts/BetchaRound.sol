@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.19;
 
+import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Sets} from "./lib/Sets.sol";
@@ -8,7 +9,7 @@ import {Sets} from "./lib/Sets.sol";
 /// @title BetchaRound
 /// @author kevincharm
 /// @notice Round contract & escrow for wager pool
-contract BetchaRound {
+contract BetchaRound is Initializable {
     using SafeERC20 for ERC20;
     using Sets for Sets.Set;
 
@@ -18,16 +19,16 @@ contract BetchaRound {
     }
 
     /// @notice Wager token address. 0 for Ether/native currency
-    address public immutable wagerTokenAddress;
+    address public wagerTokenAddress;
     /// @notice Wager token amount, in the token's respective decimal
     ///     resolution (or wei in case of Ether)
-    uint256 public immutable wagerTokenAmount;
+    uint256 public wagerTokenAmount;
     /// @notice Deadline to put in bets
-    uint256 public immutable wagerDeadlineAt;
+    uint256 public wagerDeadlineAt;
     /// @notice Earliest time that the contract can be settled
-    uint256 public immutable settlementAvailableAt;
+    uint256 public settlementAvailableAt;
     /// @notice The EOA or contract that will settle the final outcome of
-    address public immutable resolver;
+    address public resolver;
 
     /// @notice URI to metadata containing bet details
     string public metadataURI;
@@ -57,14 +58,18 @@ contract BetchaRound {
     event Settled(uint8 outcome);
     event MessagePosted(address indexed author, string content);
 
-    constructor(
+    constructor() {
+        _disableInitializers();
+    }
+
+    function init(
         address wagerTokenAddress_,
         uint256 wagerTokenAmount_,
         address resolver_,
         uint256 wagerDeadlineAt_,
         uint256 settlementAvailableAt_,
         string memory metadataURI_
-    ) {
+    ) public initializer {
         wagerTokenAddress = wagerTokenAddress_;
         wagerTokenAmount = wagerTokenAmount_;
         require(
@@ -136,6 +141,10 @@ contract BetchaRound {
 
     function totalParticipants() public view returns (uint256) {
         return outcome0Wagers.size + outcome1Wagers.size;
+    }
+
+    function isParticipating(address whom) public view returns (bool) {
+        return outcome0Wagers.has(whom) || outcome1Wagers.has(whom);
     }
 
     function claim(address recipient) public {

@@ -18,10 +18,33 @@ describe('Betcha', () => {
     let factory: BetchaRoundFactory
     beforeEach(async () => {
         ;[deployer, bob, alice] = await ethers.getSigners()
+        const roundMasterCopy = await new BetchaRound__factory(deployer).deploy()
         factory = await new BetchaRoundFactory__factory(deployer).deploy(
             BASE_GNOSIS_SAFE_PROXY_FACTORY,
             BASE_GNOSIS_SAFE_MASTERCOPY,
+            await roundMasterCopy.getAddress(),
         )
+    })
+
+    it('deploys multiple resolvers w/safe', async () => {
+        const wagerToken = await new MockERC20__factory(deployer).deploy('Fake USDC', 'USDFC')
+        const wagerTokenAmount = 1_000_000
+        await wagerToken.mint(bob.address, 1_000_000_000)
+        await wagerToken.mint(alice.address, 1_000_000_000)
+        const now = Math.floor(Date.now() / 1000)
+        const wagerDeadlineAt = now + 60
+        const settlementAvailableAt = now + 120
+        const metadataURI = 'ipfs://blabla'
+        await factory
+            .createRound(
+                await wagerToken.getAddress(),
+                wagerTokenAmount,
+                [deployer.address, bob.address],
+                wagerDeadlineAt,
+                settlementAvailableAt,
+                metadataURI,
+            )
+            .then((tx) => tx.wait())
     })
 
     it('runs happy path w/o safe', async () => {
@@ -52,10 +75,12 @@ describe('Betcha', () => {
         await expect(round.connect(bob).aightBet(0))
             .to.emit(round, 'Wagered')
             .withArgs(bob.address, await wagerToken.getAddress(), wagerTokenAmount)
+        expect(await round.isParticipating(bob.address)).to.eq(true)
         await wagerToken.connect(alice).approve(await round.getAddress(), wagerTokenAmount)
         await expect(round.connect(alice).aightBet(1))
             .to.emit(round, 'Wagered')
             .withArgs(alice.address, await wagerToken.getAddress(), wagerTokenAmount)
+        expect(await round.isParticipating(alice.address)).to.eq(true)
         expect(await round.totalParticipants()).to.eq(2)
         expect(await round.totalWageredAmount()).to.eq(wagerTokenAmount * 2)
         // Failure mode: can't bet after wager deadline
