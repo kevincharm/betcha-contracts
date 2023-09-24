@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
@@ -31,6 +31,18 @@ contract BetchaRoundFactory {
         betchaRoundMasterCopy = betchaRoundMasterCopy_;
     }
 
+    /// @notice Create a new betting round
+    /// @param wagerTokenAddress ERC-20 token address used for placing wagers
+    /// @param wagerTokenAmount The fixed amount of tokens per wager, in the
+    ///     ERC-20 token's respective decimal precision
+    /// @param resolvers The set of addresses that must agree on an outcome in
+    ///     in order for the bet to be settled
+    /// @param wagerDeadlineAt The timestamp after which no more wagers will be
+    ///     accepted
+    /// @param settlementAvailableAt The timestamp after which the bet may be
+    ///     settled
+    /// @param metadataURI URI pointing to a document that contains the
+    ///     metadata of the bet
     function createRound(
         address wagerTokenAddress,
         uint256 wagerTokenAmount,

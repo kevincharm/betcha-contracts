@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
 import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
@@ -86,10 +86,14 @@ contract BetchaRound is Initializable {
         outcome1Wagers.init();
     }
 
+    /// @notice Assert that `outcome` is considered valid (0 or 1)
+    /// @param outcome Outcome
     function _assertValidOutcome(uint8 outcome) internal pure {
         require(outcome <= 1, "Outcome must be binary");
     }
 
+    /// @notice Place a wager
+    /// @param outcome Caller's prediction
     function aightBet(uint8 outcome) public payable {
         _assertValidOutcome(outcome);
         // Global conditions
@@ -125,6 +129,8 @@ contract BetchaRound is Initializable {
         emit Wagered(msg.sender, wagerTokenAddress, wagerTokenAmount);
     }
 
+    /// @notice Settle the outcome of this bet
+    /// @param outcome The final outcome of the bet
     function settle(uint8 outcome) public {
         _assertValidOutcome(outcome);
         require(msg.sender == resolver, "Caller not authorised resolver");
@@ -139,14 +145,20 @@ contract BetchaRound is Initializable {
         emit Settled(outcome);
     }
 
+    /// @notice Get total number of addresses that placed a wager
     function totalParticipants() public view returns (uint256) {
         return outcome0Wagers.size + outcome1Wagers.size;
     }
 
+    /// @notice Helper to determine if an address did place a wager
+    /// @param whom Address to check
+    /// @return true if `whom` did place a wager
     function isParticipating(address whom) public view returns (bool) {
         return outcome0Wagers.has(whom) || outcome1Wagers.has(whom);
     }
 
+    /// @notice Claim winnings, if `recipient` is eligible
+    /// @param recipient Alleged winner
     function claim(address recipient) public {
         SettlementInformation memory s = settlementInfo;
         require(s.hasSettled, "Not yet settled");
@@ -166,6 +178,8 @@ contract BetchaRound is Initializable {
         }
     }
 
+    /// @notice Payout a share of the pot, if `to` has not already claimed
+    /// @param to Where to payout
     function _payoutShare(address to) internal {
         // Ensure caller didn't already claim
         require(!hasClaimed[to], "Already claimed");
@@ -183,7 +197,10 @@ contract BetchaRound is Initializable {
         emit Payout(to, wagerTokenAddress, payoutAmount);
     }
 
+    /// @notice Post a message to the onchain conversation
+    /// @param content Content of the message
     function post(string calldata content) external {
+        require(isParticipating(msg.sender), "Only gamblers may post");
         emit MessagePosted(msg.sender, content);
     }
 }
