@@ -6,6 +6,7 @@
   "author": "kevincharm <kevin.charm@troop.finance>",
   "scripts": {
     "deploy:base": "yarn hardhat --network base run scripts/deploy.ts",
+    "coverage": "yarn hardhat --network hardhat coverage",
     "test": "yarn hardhat --network hardhat test"
   },
   "devDependencies": {
